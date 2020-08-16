@@ -28,21 +28,63 @@
       <form class="col-md-6 m-auto py-5">
         <div class="input-group mb-3">
           <input
+            autocomplete="off"
             type="text"
             class="form-control"
+            id="city"
             placeholder="Enter a location for Weather ..."
           />
           <div class="input-group-append">
-            <button type="button" class="btn btn-danger">Search</button>
+            <button type="submit" class="btn btn-danger">Search</button>
           </div>
         </div>
       </form>
       <div class="weather-status text-white text-center">
-        <img src="https://openweathermap.org/img/wn/02d@2x.png" alt="" />
-        <h1>Dhaka</h1>
-        <h3><span>38.06</span>&deg;C</h3>
-        <h1 class="lead">Clouds</h1>
+        <img id="icon-type" src="" alt="" />
+        <h1 id="city-name">Dhaka</h1>
+        <h3><span id="degree">38.06</span>&deg;C</h3>
+        <h1 id="lead">Clouds</h1>
       </div>
     </div>
+
+    <script>
+      //set api
+      const api = {
+        key: "c0a13cdeb3f7cac0507317486f399f72",
+        baseUrl: "https://api.openweathermap.org/data/2.5/weather",
+      };
+
+      document.querySelector(".btn").addEventListener("click", () => {
+        const cityname = document.getElementById("city").value;
+        getApiData(cityname);
+      });
+
+      document.getElementById("city").addEventListener("keydown", (event) => {
+        const cityname = document.getElementById("city").value;
+        if (event.keyCode === 38) {
+          getApiData(cityname);
+          console.log("click me");
+        }
+      });
+
+      //get user data
+      let getApiData = (city) => {
+        fetch(`${api.baseUrl}?q=${city}&appid=${api.key}&units=metric`)
+          .then((response) => response.json())
+          .then((data) => showData(data));
+      };
+
+      // show city weather
+      let showData = (weather) => {
+        console.log(weather);
+        document.getElementById("city-name").innerText =
+          weather.name + ", " + weather.sys.country;
+        document.getElementById("degree").innerText = weather.main.temp;
+        document.getElementById("lead").innerText = weather.weather[0].main;
+
+        const iconUrl = `https://openweathermap.org/img/wn/${weather.weather[0].icon}@4x.png`;
+        document.getElementById("icon-type").setAttribute("src", iconUrl);
+      };
+    </script>
   </body>
 </html>
